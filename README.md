@@ -1,0 +1,1 @@
+# circleci-cfn-ansible-serverspec
