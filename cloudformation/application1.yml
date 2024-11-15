@@ -99,10 +99,6 @@ Resources:
       Path: "/"
       Roles:
       - !Ref S3AccessRole 
-      
-Capabilities:
-  - CAPABILITY_IAM
-  - CAPABILITY_NAMED_IAM
   
 Outputs:
   InstanceId:
