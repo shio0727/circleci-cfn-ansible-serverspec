@@ -5,8 +5,24 @@ Parameters:
   Namebase:
     Type: String
     Default: lecture13
+    
+  RDSpassword:
+    Description: Input RDS Password 
+    Type: String
+    Default: ''
+    NoEcho: true
   
 Resources:
+# パラメーター
+　MyDBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties: 
+      Description: MySQL Parameter Group
+      DBParameterGroupName: !Sub $lecture13-db-parametergroup-CFn
+      Family: mysql8.0
+      Tags:
+        - Key: Name
+          Value: !Sub $lecture13-db-parametergroup-CFn
 # rds作成
   RDS:
     Type: AWS::RDS::DBInstance
@@ -23,14 +39,15 @@ Resources:
       Port: 3306
       BackupRetentionPeriod: 7
       MasterUsername: admin
-      MasterUserPassword: "{{resolve:ssm-secure:rdskey:1}}"
+      MasterUserPassword: !Ref RDSpassword
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
+      DBParameterGroupName: !Ref MyDBParameterGroup
       Engine: MySQL
       EngineVersion: 8.0.35
       DBSubnetGroupName: !Ref RDSSubnetgroup
       VPCSecurityGroups:
-        - !ImportValue lecture13-SecurityGroupRDS
+        - !ImportValue {Namebase}-SecurityGroupRDS
         
   # サブネットグループ
   RDSSubnetgroup:
