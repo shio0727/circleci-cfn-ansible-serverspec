@@ -47,7 +47,7 @@ Resources:
       EngineVersion: 8.0.35
       DBSubnetGroupName: !Ref RDSSubnetgroup
       VPCSecurityGroups:
-        - !ImportValue ${NameBase}-SecurityGroupRDS
+        - !ImportValue  lecture13-SecurityGroupRDS
         
   # サブネットグループ
   RDSSubnetgroup:
