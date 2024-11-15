@@ -1,10 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Application_Layer Template
 
-Capabilities:
-  - CAPABILITY_IAM
-  - CAPABILITY_NAMED_IAM
-
 Parameters:
   NameBase: 
     Description: for security
