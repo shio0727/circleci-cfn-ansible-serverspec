@@ -28,6 +28,7 @@ jobs:
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app1-stack"
           template-file-path: "cloudformation/application1.yml"
+          capabilities: CAPABILITY_NAMED_IAM
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app2-stack"
           template-file-path: "cloudformation/application2.yml"
