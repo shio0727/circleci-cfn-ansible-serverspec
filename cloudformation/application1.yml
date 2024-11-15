@@ -17,6 +17,11 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
     Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
     Description: The AMI ID for the EC2 instance
+    
+
+Capabilities:
+  - CAPABILITY_IAM
+  - CAPABILITY_NAMED_IAM
   
 Resources:
 # EC2作成
@@ -96,9 +101,6 @@ Resources:
       Roles:
       - !Ref S3AccessRole 
       
-Capabilities:
-  - CAPABILITY_IAM
-  - CAPABILITY_NAMED_IAM
 Outputs:
   InstanceId:
     Description: The Instance ID
