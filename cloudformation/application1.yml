@@ -61,8 +61,7 @@ Resources:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement: 
-          - 
-            Effect: "Allow"
+          - Effect: "Allow"
             Principal: 
               Service: 
                 - "ec2.amazonaws.com"
@@ -70,10 +69,10 @@ Resources:
               - "sts:AssumeRole"
       Path: "/"
   
-  AccessPolicies:
+  Policies:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: s3access
+      PolicyName: lecture13
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -84,6 +83,7 @@ Resources:
               - s3:ListBucket
               - s3:DeleteObject
               - s3:GetBucketLocation
+              - cloudformation:DescribeStacks
           Resource: "arn:aws:s3:::*"
         - Effect: Allow
           Action: "*"
@@ -92,6 +92,7 @@ Resources:
             - "arn:aws:s3:::<lecture13-clf-bucket>/*"
       Roles:
       - !Ref S3AccessRole
+    
   
   S3AccessInstanceProfile:
     Type: AWS::IAM::InstanceProfile
