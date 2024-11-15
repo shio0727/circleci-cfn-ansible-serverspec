@@ -19,6 +19,17 @@ Parameters:
     Description: The AMI ID for the EC2 instance
   
 Resources:
+# Capabilitiesを定義
+  MyIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: MyRole　
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
 # EC2作成
   EC2:
     Type: AWS::EC2::Instance
@@ -96,6 +107,9 @@ Resources:
       Roles:
       - !Ref S3AccessRole 
       
+Capabilities:
+  - CAPABILITY_IAM
+  - CAPABILITY_NAMED_IAM
 Outputs:
   InstanceId:
     Description: The Instance ID
