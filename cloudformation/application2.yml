@@ -54,7 +54,7 @@ Resources:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: for RDS
-      DBSubnetGroupName: SampleRDSSubnetgroup
+      DBSubnetGroupName: lecture13RDSSubnetgroup
       SubnetIds:
         - !ImportValue lecture13-PrivateSubnet1id
         - !ImportValue lecture13-PrivateSubnet2id  
