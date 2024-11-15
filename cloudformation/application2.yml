@@ -18,11 +18,11 @@ Resources:
     Type: AWS::RDS::DBParameterGroup
     Properties: 
       Description: MySQL Parameter Group
-      DBParameterGroupName: !Sub $lecture13-db-parametergroup-CFn
+      DBParameterGroupName: !Sub $lecture13-db-pg-cfn
       Family: mysql8.0
       Tags:
         - Key: Name
-          Value: !Sub $lecture13-db-parametergroup-CFn
+          Value: !Sub $lecture13-db-pg-cfn
 # rds作成
   RDS:
     Type: AWS::RDS::DBInstance
