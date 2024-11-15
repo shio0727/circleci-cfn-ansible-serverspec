@@ -83,7 +83,6 @@ Resources:
               - s3:ListBucket
               - s3:DeleteObject
               - s3:GetBucketLocation
-              - cloudformation:DescribeStacks
           Resource: "arn:aws:s3:::*"
         - Effect: Allow
           Action: "*"
@@ -101,6 +100,10 @@ Resources:
       Roles:
       - !Ref S3AccessRole 
       
+Capabilities:
+  - CAPABILITY_IAM
+  - CAPABILITY_NAMED_IAM
+  
 Outputs:
   InstanceId:
     Description: The Instance ID
