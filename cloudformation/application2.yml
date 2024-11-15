@@ -14,7 +14,7 @@ Parameters:
   
 Resources:
 # パラメーター
-　MyDBParameterGroup:
+  MyDBParameterGroup:
     Type: AWS::RDS::DBParameterGroup
     Properties: 
       Description: MySQL Parameter Group
@@ -24,7 +24,7 @@ Resources:
         - Key: Name
           Value: !Sub $lecture13-db-parametergroup-CFn
 # rds作成
-　RDS:
+  RDS:
     Type: AWS::RDS::DBInstance
     Properties:
     # パブリックアクセス
