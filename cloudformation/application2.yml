@@ -12,32 +12,30 @@ Parameters:
     Default: Admin
     
   #RDSUserPassword:
-# パラメータ値をマスク
-    #NoEcho: true
-    #Description: "RDS Master User Password"
-    #Type: String
-    #MinLength: 8
-    #MaxLength: 128
-    #AllowedPattern: "[a-zA-Z0-9]*"
+  # パラメータ値をマスク
+  #  NoEcho: true
+  #  Description: "RDS Master User Password"
+  #  Type: String
+  #  MinLength: 8
+  #  MaxLength: 128
+  #  AllowedPattern: "[a-zA-Z0-9]*"
   
 Resources:
-　MyDBParameterGroup:
-  Type: AWS::RDS::DBParameterGroup
-  Properties:
-    Description: "parametergroup"
-    Family: mysql8.0
-    Parameters:
-      time_zone: UTC
+  MyDBParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: "parametergroup"
+      Family: mysql8.0
+      Parameters:
+        time_zone: UTC
 
-# rds作成
+  # rds作成
   RDS:
     Type: AWS::RDS::DBInstance
     Properties:
-    # パブリックアクセス
       StorageType: gp2
-      AllocatedStorage : 20
+      AllocatedStorage: 20
       PubliclyAccessible: false
-    # インスタンス識別子
       AvailabilityZone: !Select 
         - 0
         - Fn::GetAZs: !Ref AWS::Region
@@ -45,7 +43,7 @@ Resources:
       Port: 3306
       BackupRetentionPeriod: 7
       MasterUsername: !Ref RDSMasterUsername
-      MasterUserPassword: !sub "{{resolve:ssn-secure:/lecture13/rds-pass}}"
+      MasterUserPassword: !Sub "{{resolve:ssm-secure:/lecture13/rds-pass}}"
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
       DBParameterGroupName: !Ref MyDBParameterGroup
@@ -53,7 +51,7 @@ Resources:
       EngineVersion: 8.0.35
       DBSubnetGroupName: !Ref RDSSubnetgroup
       VPCSecurityGroups:
-        - !ImportValue  lecture13-SecurityGroupRDS
+        - !ImportValue lecture13-SecurityGroupRDS
         
   # サブネットグループ
   RDSSubnetgroup:
@@ -63,4 +61,4 @@ Resources:
       DBSubnetGroupName: lecture13RDSSubnetgroup
       SubnetIds:
         - !ImportValue lecture13-PrivateSubnet1id
-        - !ImportValue lecture13-PrivateSubnet2id  
+        - !ImportValue lecture13-PrivateSubnet2id
