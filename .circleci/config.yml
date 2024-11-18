@@ -45,15 +45,6 @@ jobs:
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app2-stack"
           template-file-path: "cloudformation/application2.yml"
-      - run:
-          name: Deploy CloudFormation Stack
-          command: |
-            aws cloudformation create-change-set --stack-name lecture13-app2-stack \
-              --template-body file://template.yaml \
-              --change-set-name my-change-set \
-              --parameters ParameterKey=RDSMasterUsername,ParameterValue=$RDSMasterUsername \
-                           ParameterKey=RDSUserPassword,ParameterValue=$RDSUserPassword \
-              --capabilities CAPABILITY_IAM
           parameter-overrides: RDSpassword=$AWS_DB_PW
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app3-stack"
