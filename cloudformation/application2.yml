@@ -6,23 +6,23 @@ Parameters:
     Type: String
     Default: lecture13
     
-  RDSpassword:
-    Description: Input RDS Password 
+  RDSMasterUsername:
+    Description: "RDS Master User Name"
     Type: String
-    Default: ''
+    MinLength: 8
+    MaxLength: 128
+    AllowedPattern: "[a-zA-Z][a-zA-Z0-9]*"
+    
+  RDSUserPassword:
+# パラメータ値をマスク
     NoEcho: true
+    Description: "RDS Master User Password"
+    Type: String
+    MinLength: 8
+    MaxLength: 128
+    AllowedPattern: "[a-zA-Z0-9]*"
   
 Resources:
-# パラメーター
-  MyDBParameterGroup:
-    Type: AWS::RDS::DBParameterGroup
-    Properties: 
-      Description: MySQL Parameter Group
-      DBParameterGroupName: !Sub ${Namebase}-db-parametergroup-CFn
-      Family: mysql8.0
-      Tags:
-        - Key: Name
-          Value: !Sub ${Namebase}-db-parametergroup-CFn
 # rds作成
   RDS:
     Type: AWS::RDS::DBInstance
@@ -39,7 +39,7 @@ Resources:
       Port: 3306
       BackupRetentionPeriod: 7
       MasterUsername: admin
-      MasterUserPassword: !Ref RDSpassword
+      MasterUserPassword: !Ref RDSUserPassword
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
       DBParameterGroupName: !Ref MyDBParameterGroup
