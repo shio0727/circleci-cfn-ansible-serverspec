@@ -35,7 +35,6 @@ Resources:
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
-      DBParameterGroupName: !Ref MyDBParameterGroup
       Engine: MySQL
       EngineVersion: 8.0.35
       DBSubnetGroupName: !Ref RDSSubnetgroup
