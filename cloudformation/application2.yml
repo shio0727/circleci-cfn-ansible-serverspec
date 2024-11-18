@@ -31,7 +31,7 @@ Resources:
       DBInstanceClass: db.t3.micro
       Port: 3306
       BackupRetentionPeriod: 7
-      MasterUsername: !Ref admin
+      MasterUsername: admin
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
