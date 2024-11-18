@@ -21,6 +21,14 @@ Parameters:
     #AllowedPattern: "[a-zA-Z0-9]*"
   
 Resources:
+　MyDBParameterGroup:
+  Type: AWS::RDS::DBParameterGroup
+  Properties:
+    Description: "MySQL RDSインスタンス用のパラメータグループ"
+    Family: mysql8.0
+    Parameters:
+      time_zone: UTC
+
 # rds作成
   RDS:
     Type: AWS::RDS::DBInstance
@@ -37,7 +45,7 @@ Resources:
       Port: 3306
       BackupRetentionPeriod: 7
       MasterUsername: !Ref RDSMasterUsername
-      MasterUserPassword: !Ref '{{resolve:ssm-secure:/lecture13/rds-pass}}'
+      MasterUserPassword: !sub '{{resolve:ssm-secure:/lecture13/rds-pass}}'
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
       DBParameterGroupName: !Ref MyDBParameterGroup
