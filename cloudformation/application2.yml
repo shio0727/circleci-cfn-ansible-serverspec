@@ -7,14 +7,6 @@ Parameters:
     Default: lecture13
 
 Resources:
-  MyDBParameterGroup:
-    Type: AWS::RDS::DBParameterGroup
-    Properties:
-      Description: "parametergroup"
-      Family: mysql8.0
-      Parameters:
-        time_zone: UTC
-        
   RDSSecret: # ここでRDSのパスワードとなるランダム文字列を生成
     Type: "AWS::SecretsManager::Secret"
     Properties:
