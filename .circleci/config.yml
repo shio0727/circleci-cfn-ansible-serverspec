@@ -17,6 +17,8 @@ jobs:
     environment:
      RDSMasterUsername: $RDSMasterUsername
      RDSUserPassword: $RDSUserPassword
+    steps:
+      - checkout
   execute-cloudformation:
     docker:
       - image: circleci/python:3.8
