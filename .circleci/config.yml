@@ -11,14 +11,18 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-　build:
+  build:
 　  docker:
 　    - image: circleci/python:3.8
 　  environment:
 　    RDSMasterUsername: $RDSMasterUsername
 　    RDSUserPassword: $RDSUserPassword
-　    
   execute-cloudformation:
+    docker: 
+      - image: circleci/python:3.8
+    environment:
+　    RDSMasterUsername: $RDSMasterUsername
+　    RDSUserPassword: $RDSUserPassword
     executor: aws-cloudformation/default
     steps:
       - checkout
