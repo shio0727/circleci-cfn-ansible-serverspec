@@ -5,15 +5,7 @@ Parameters:
   Namebase:
     Type: String
     Default: lecture13
-  #RDSUserPassword:
-  # パラメータ値をマスク
-  #  NoEcho: true
-  #  Description: "RDS Master User Password"
-  #  Type: String
-  #  MinLength: 8
-  #  MaxLength: 128
-  #  AllowedPattern: "[a-zA-Z0-9]*"
-  
+
 Resources:
   MyDBParameterGroup:
     Type: AWS::RDS::DBParameterGroup
@@ -47,7 +39,7 @@ Resources:
       DBInstanceClass: db.t3.micro
       Port: 3306
       BackupRetentionPeriod: 7
-      MasterUsername: !Ref RDSMasterUsername
+      MasterUsername: !Ref admin
       MasterUserPassword: !Sub '{{resolve:secretsmanager:${RDSSecret}:SecretString:password}}'
       DBInstanceIdentifier: !Sub ${Namebase}-rds
       DBName: RDS10
