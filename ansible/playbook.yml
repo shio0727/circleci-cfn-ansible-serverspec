@@ -7,5 +7,4 @@
         name: git
         state: present
         lock_timeout: 180
-  rules:
-    - { rule: ruby }
+  
