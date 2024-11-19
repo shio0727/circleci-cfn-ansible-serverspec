@@ -59,10 +59,10 @@ jobs:
           fingerprints:
             - SHA256:1L4djQiuMIWSJwXsMSIW9HJqz7IjPsQpARLqhU6H+o0
       - ansible-playbook/install:
-          version: 2.9.23
+          version: 2.10.7
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
-          playbook-options: -u ec2-user -i .ansible/inventory --private-key ~/.ssh/authorized_keys
+          playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_keys
           
           
 
