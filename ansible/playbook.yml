@@ -7,8 +7,5 @@
         name: git
         state: present
         lock_timeout: 180
-    - name: Disable strict host key checking
-      set_fact:
-        ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
-        #StrictHostKeyChecking を無効にする
+   
   
