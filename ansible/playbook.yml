@@ -1,0 +1,11 @@
+---
+- host: all
+  become: yes
+  tasks:
+    - name: Install Git
+      ansible.builtin.yum:
+        name: git
+        state: present
+        lock_timeout: 180
+  rules:
+    - { rule: ruby }
