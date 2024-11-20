@@ -1,0 +1,14 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Include 01-yum
+      include_role:
+        name: 01-yum
+
+    - name: Include 02-git
+      include_role:
+        name: 02-git
+
+  

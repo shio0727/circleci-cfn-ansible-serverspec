@@ -2,8 +2,6 @@
 - hosts: all
   become: yes
   
-  roles:
-    - role: 01-yum 
   vars: 
     app_dir: /home/ec2-user/raisetech-live8-sample-app
     ansible_user: ec2-user
