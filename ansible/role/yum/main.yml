@@ -1,0 +1,33 @@
+---
+- name: yum update all package
+  become: true
+  ansible.builtin.yum:
+   name: '*'
+   state: latest
+   #yumのアップデート
+- name: yum install package
+  become: true
+  ansible.builtin.yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - gcc-c++
+      - make
+      - patch
+      - git 
+      - curl
+      - openssl-devel
+      - libyaml-devel
+      - readline
+      - readline-devel
+      - zlib
+      - zlib-devel
+      - libffi-devel
+      - libxml2 
+      - libxslt 
+      - libxml2-devel 
+      - libxslt-devel 
+      - sqlite-devel
+      - ImageMagick
+      - ImageMagick-devel
