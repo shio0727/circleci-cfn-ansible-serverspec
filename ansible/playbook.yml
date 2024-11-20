@@ -3,9 +3,9 @@
   become: yes
   
   roles:
-    - { role: yum }
-    - { role: git }
-    - { role: ruby }
+    - { role: 01-yum }
+    - { role: 02-git}
+    - { role: 03-ruby }
   vars: 
     app_dir: /home/ec2-user/raisetech-live8-sample-app
     ansible_user: ec2-user
