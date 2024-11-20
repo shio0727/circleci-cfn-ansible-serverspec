@@ -65,9 +65,30 @@ jobs:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_keys
           
+  execute_01-yum:
+    executor: ansible-playbook/default
+    steps:
+      - checkout
+      - run:
+          name: Execute Ansible 01-yum
+          command: ansible-playbook -i inventory.yml 01-yum.yml
+
+  execute_02-git:
+    executor: ansible-playbook/default
+    steps:
+      - checkout
+      - run:
+          name: Execute Ansible 02-git
+          command: ansible-playbook -i inventory.yml 02-git.yml
+
+  execute_03-ruby:
+    executor: ansible-playbook/default
+    steps:
+      - checkout
+      - run:
+          name: Execute Ansible 03-ruby
+          command: ansible-playbook -i inventory.yml 03-ruby.yml
           
-
-
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
@@ -77,5 +98,14 @@ workflows:
       - execute-ansible:
           requires:
             - execute-cloudformation
+      - execute_01-yum:
+          requires:
+            - execute-ansible
+      - execute_02-git:
+          requires:
+            - execute_01-yum
+      - execute_03-ruby:
+          requires:
+            - execute_02-git
 # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
