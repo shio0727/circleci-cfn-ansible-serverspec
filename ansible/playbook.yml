@@ -2,6 +2,15 @@
 - hosts: all
   become: yes
   
+  tasks:
+    - name: Include 01-yum
+      include_role:
+        name: 01-yum
+
+    - name: Include 02-git
+      include_role:
+        name: 02-git
+  
   vars: 
     app_dir: /home/ec2-user/raisetech-live8-sample-app
     ansible_user: ec2-user
