@@ -90,31 +90,31 @@
 
 # rubyのインストール
 
-- name: ruby 3.2.3 installed check
-  shell: bash -lc "rbenv versions | grep {{ ruby_version }}"
+- name: Check if Ruby {{ ruby_version }} is installed
+  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv versions | grep {{ ruby_version }}"
   register: ruby_check
   changed_when: no
   ignore_errors: true
 
-- name: ruby install
-  shell: bash -lc "rbenv install {{ ruby_version }} -v"
+- name: Install Ruby {{ ruby_version }}
+  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv install {{ ruby_version }} -v"
   when: ruby_check is failed
   register: ruby_install
 
-- name: debug ruby install
+- name: Debug Ruby installation
   become: true
   debug:
     msg: "{{ ruby_install }}"
 
-- name: rbenv rehash
-  shell: bash -lc "rbenv rehash"
+- name: Rehash rbenv
+  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv rehash"
   when: ruby_check is failed
 
-
-- name: changed ruby 3.2.3
-  shell: bash -lc "rbenv global {{ ruby_version }}"
+- name: Set global Ruby version to {{ ruby_version }}
+  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv global {{ ruby_version }}"
   when: ruby_check is failed
   ignore_errors: true
+
 
 #installed bundler
 - name: installed check bundler {{ bundler_version }}
