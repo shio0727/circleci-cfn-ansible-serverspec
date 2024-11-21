@@ -64,7 +64,10 @@ jobs:
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
-          
+      - run:
+          name: Install community.mysql collection
+          command: |
+            ansible-galaxy collection install community.mysql -vvv
           
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
