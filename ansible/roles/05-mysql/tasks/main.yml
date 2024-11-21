@@ -1,74 +1,95 @@
 ---
-- name: Install pip
-  become: true
-  yum:
-    name: python-pip
-    state: present
+- name: Install required collections
+  hosts: localhost
+  tasks:
+    - name: Install community.mysql collection
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection install community.mysql
+      become: true
 
-- name: uninstall MariaDB
-  become: true
-  yum:
-    name: mariadb*
-    state: absent
+- name: Configure MySQL and retrieve RDS password
+  hosts: localhost
+  vars:
+    app_dir: /path/to/your/app
+  tasks:
+    - name: Retrieve RDS password from Secrets Manager
+      community.aws.secretsmanager_secret:
+        name: "RDSSecret"
+        state: present
+      register: rds_secret
 
-- name: Install pymysql
-  become: true
-  pip:
-    name: PyMySQL
-    state: present
+    - name: Set RDSMasterPassword variable
+      set_fact:
+        RDSMasterPassword: "{{ rds_secret.secret_string.password }}"
 
-- name: Install RPM-GPG-KEY-mysql
-  become: true
-  rpm_key:
-    state: present
-    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
-  ignore_errors: true
+    - name: Install pip
+      become: true
+      yum:
+        name: python-pip
+        state: present
 
-- name: install myaql repository
-  become: true
-  yum:
-    name: "https://repo.mysql.com//mysql84-community-release-el7-1.noarch.rpm"
-    state: present
+    - name: Uninstall MariaDB
+      become: true
+      yum:
+        name: mariadb*
+        state: absent
 
-- name: install mysql packges
-  become: true
-  yum:
-    name:
-      - mysql-community-devel
-      - mysql-community-server
-      - mysql-community-client
-    state: present
+    - name: Install pymysql
+      become: true
+      pip:
+        name: PyMySQL
+        state: present
 
-- name: add database.yml.j2
-  become: true
-  template:
-    src: database.yml.j2
-    dest: "{{ app_dir }}/config/database.yml.j2"
+    - name: Install RPM-GPG-KEY-mysql
+      become: true
+      rpm_key:
+        state: present
+        key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+      ignore_errors: true
 
-- name: Start MySQL service
-  become: true
-  systemd:
-    name: mysqld
-    state: started
-  ignore_errors: true
+    - name: Install MySQL repository
+      become: true
+      yum:
+        name: "https://repo.mysql.com//mysql84-community-release-el7-1.noarch.rpm"
+        state: present
 
-- name: use mysql_native_password
-  community.mysql.mysql_user:
-    name: admin
-    host: "%"
-    password: "{{ MasterUserPassword }}"
-    login_user: admin
-    login_password: "{{ MasterUserPassword }}"
-    login_host: "{{ EndpointAddress }}"
-    priv: "*.*:ALL,GRANT"
-    state: present
-    plugin: mysql_native_password
-  ignore_errors: true
+    - name: Install MySQL packages
+      become: true
+      yum:
+        name:
+          - mysql-community-devel
+          - mysql-community-server
+          - mysql-community-client
+        state: present
 
+    - name: Add database.yml.j2 template
+      become: true
+      template:
+        src: database.yml.j2
+        dest: "{{ app_dir }}/config/database.yml"
 
+    - name: Start MySQL service
+      become: true
+      systemd:
+        name: mysqld
+        state: started
+      ignore_errors: true
 
-- name: Start MySQL service
-  become: true
-  systemd:
-    name: mysqld
-    state: restarted
+    - name: Create MySQL user with mysql_native_password
+      community.mysql.mysql_user:
+        name: admin
+        host: "%"
+        password: "{{ RDSMasterPassword }}"
+        login_user: admin
+        login_password: "{{ RDSMasterPassword }}"
+        login_host: "your-rds-endpoint"
+        priv: "*.*:ALL,GRANT"
+        state: present
+        plugin: mysql_native_password
+      ignore_errors: true
+
+    - name: Restart MySQL service
+      become: true
+      systemd:
+        name: mysqld
+        state: restarted
