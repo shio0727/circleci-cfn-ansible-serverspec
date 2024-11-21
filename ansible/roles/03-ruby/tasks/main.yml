@@ -111,7 +111,7 @@
 # installed bundler
 - name: Check if Bundler {{ bundler_version }} is installed
   shell: |
-    **bash -lc "bundler --version | grep {{ bundler_version }}"**
+    bash -lc "bundler --version | grep {{ bundler_version }}"
   args:
     chdir: "{{ app_dir }}"
   ignore_errors: true
