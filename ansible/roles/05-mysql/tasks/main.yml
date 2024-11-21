@@ -43,7 +43,7 @@
   become: true
   template:
     src: templates/detabase.yml.j2
-    dest: roles/05-mysql/templates/detabase.yml
+    dest: "{{ app_dir }}/config/database.yml"
 
 - name: Start MySQL service
   systemd:
