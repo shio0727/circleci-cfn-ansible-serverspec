@@ -1,8 +1,4 @@
 ---
-- name: Install community.mysql collection
-  ansible.builtin.command:
-    cmd: ansible-galaxy collection install community.mysql
-    
 - name: Install pip
   become: true
   yum:
