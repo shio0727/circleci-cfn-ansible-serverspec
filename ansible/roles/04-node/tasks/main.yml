@@ -1,7 +1,6 @@
 ---
-# 03_node.js file for rolse
 
-- name: check node.js installed
+- name: check if node.js is installed
   shell: "node --version | grep {{ nodejs_version }}"
   register: node_check
   changed_when: no
@@ -9,7 +8,6 @@
 
 
 - name: Download and install NVM
-
   shell: >
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/{{ nvm_version }}/install.sh | bash
   args:
