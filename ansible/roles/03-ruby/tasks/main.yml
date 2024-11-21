@@ -10,7 +10,7 @@
 - name: Check rbenv
   shell: bash -lc "rbenv --version"
   register: rbenv_exists
-  changed_when: False
+  changed_when: false
   ignore_errors: true
 
 # GItリポジトリのクローン
@@ -62,7 +62,7 @@
     dest: /home/{{ ansible_user }}/.rbenv/plugins/ruby-build
   when: rbenv_exists is failed
 
-# パスの設定
+# パスをの設定
 - name: Add rbenv/bin path to .bash_profile
   lineinfile: 
     path: /home/{{ ansible_user }}/.bash_profile
@@ -71,19 +71,16 @@
   when: rbenv_exists is failed
 
 # bash_profile の更新
-- name: set .rbenv path
+- name: Set .rbenv path
   lineinfile: 
     path: /home/{{ ansible_user }}/.bash_profile
     line: 'eval "$(rbenv init -)"'
     create: yes
   when: rbenv_exists is failed
 
-- name: update .bash_profile
+#.bash_profile をソースする
+- name: Source .bash_profile
   shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile"
-  when: rbenv_exists is failed
-
-- name: Initialize rbenv
-  shell: eval "$(rbenv init -)"
   when: rbenv_exists is failed
 
 # rubyのインストール
@@ -104,18 +101,17 @@
     msg: "{{ ruby_install }}"
 
 - name: Rehash rbenv
-  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv rehash"
-  when: ruby_check is failed
+  **shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv rehash"**
+  when: ruby_install is succeeded
 
 - name: Set global Ruby version to {{ ruby_version }}
-  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv global {{ ruby_version }}"
-  when: ruby_check is failed
-  ignore_errors: true
+  **shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv global {{ ruby_version }}"**
+  when: ruby_install is succeeded
 
 # installed bundler
-- name: installed check bundler {{ bundler_version }}
+- name: Check if Bundler {{ bundler_version }} is installed
   shell: |
-    bash -lc "bundler --version | grep {{ bundler_version }}"
+    **bash -lc "bundler --version | grep {{ bundler_version }}"**
   args:
     chdir: "{{ app_dir }}"
   ignore_errors: true
