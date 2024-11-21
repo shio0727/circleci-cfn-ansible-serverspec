@@ -17,12 +17,6 @@
     name: PyMySQL
     state: present
 
-- name: Install pymysql using pip
-  become: true
-  pip:
-    name: pymysql
-    state: present
-
 - name: Install RPM-GPG-KEY-mysql
   become: true
   rpm_key:
