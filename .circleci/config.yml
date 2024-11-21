@@ -62,6 +62,13 @@ jobs:
       - ansible-playbook/install:
           version: 2.9.23
       - run:
+          name: Install Ansible
+          command: pip install ansible
+      - run:
+          name: Create required directories
+          command: |
+            mkdir -p ~/.ansible/collections/ansible_collections
+      - run:
           name: Install community.mysql collection
           command: |
             ansible-galaxy collection install community.mysql 
