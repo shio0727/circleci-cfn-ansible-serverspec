@@ -19,11 +19,11 @@
   when: node_check is failed
  
 
-- name: source ~/.nvm/nvm.sh
+- name: Copy nvm.sh to /etc/profile.d
   become: true
   copy:
-    src: roles/03_node.js/templates/nvm.sh
-    dest: /etc/profile.d
+    src: roles/04-node/templates/nvm.sh.j2
+    dest: /etc/profile.d/nvm.sh
   when: node_check is failed
 
 - name: Add NVM source lines to .bash_profile
