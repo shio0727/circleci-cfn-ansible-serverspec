@@ -101,7 +101,7 @@
     msg: "{{ ruby_install }}"
 
 - name: Rehash rbenv
-  **shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv rehash"**
+  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv rehash"
   when: ruby_install is succeeded
 
 - name: Set global Ruby version to {{ ruby_version }}
