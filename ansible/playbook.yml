@@ -17,7 +17,7 @@
         
     - name: Include 04-node
       include_role:
-        name: 03-ruby
+        name: 04-node
   
   vars: 
     app_dir: /home/ec2-user/raisetech-live8-sample-app
