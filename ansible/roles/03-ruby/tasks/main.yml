@@ -105,7 +105,7 @@
   when: ruby_install is succeeded
 
 - name: Set global Ruby version to {{ ruby_version }}
-  **shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv global {{ ruby_version }}"**
+  shell: bash -lc "source /home/{{ ansible_user }}/.bash_profile && rbenv global {{ ruby_version }}"
   when: ruby_install is succeeded
 
 # installed bundler
