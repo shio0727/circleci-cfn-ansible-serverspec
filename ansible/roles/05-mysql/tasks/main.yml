@@ -42,8 +42,8 @@
 - name: add database.yml.j2
   become: true
   template:
-    src: database.yml.j2
-    dest: "{{ app_dir }}/config/database.yml"
+    src: templates/detabase.yml.j2
+    dest: roles/05-mysql/templates/detabase.sh.j2
 
 - name: Start MySQL service
   systemd:
