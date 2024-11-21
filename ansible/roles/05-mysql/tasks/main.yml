@@ -39,11 +39,11 @@
       - mysql-community-client
     state: present
 
-- name: add database.yml.j2
+- name: add detabase.yml.j2
   become: true
   template:
     src: templates/detabase.yml.j2
-    dest: roles/05-mysql/templates/detabase.sh.j2
+    dest: roles/05-mysql/templates/detabase.yml
 
 - name: Start MySQL service
   systemd:
