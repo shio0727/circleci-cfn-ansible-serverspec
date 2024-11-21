@@ -50,7 +50,6 @@
     dest: "{{ app_dir }}/config/database.yml"
 
 - name: Start MySQL service
-  become: true
   systemd:
     name: mysqld
     state: started
