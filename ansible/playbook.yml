@@ -32,3 +32,4 @@
     ansible_user: ec2-user
     MasterUserPassword: "RDS_PASSWORD"
     EndpointAddress: "RDS_ENDPOINT"
+   

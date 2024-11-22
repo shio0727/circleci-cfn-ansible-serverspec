@@ -17,7 +17,22 @@
   become: true
   debug:
     msg: "{{ nginx_install }}"
+    
+- name: Get ALB DNS name
+  aws:
+    region: "{{ aws_region }}"
+    service: elbv2
+    operation: describe-load-balancers
+    filters:
+      LoadBalancerArns:
+        - "{{ lookup('aws_cfn', 'ALB', stack_name='your-stack-name') }}"
+  register: alb_info
 
+- name: Set ALB DNS name fact
+  set_fact:
+    ALB_DNS: "{{ alb_info.LoadBalancers[0].DNSName }}"
+    
+- name: Display ALB_DNS debug: msg: "ALB DNS is {{ ALB_DNS }}"
 
 - name: development.rb copy 
   become: true
