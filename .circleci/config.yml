@@ -75,7 +75,14 @@ jobs:
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
-      
+      - run:
+          name: Install Ansible Galaxy Collections
+          command: ansible-galaxy collection install amazon.aws
+      - run:
+          name: Install Ansible
+          command: pip install ansible
+
+
           
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
