@@ -21,55 +21,74 @@
   debug:
     msg: "{{ nginx_install }}"
     
-# ALB DNS名の取得
-- name: Get ALB DNS name
-  amazon.aws.elb_info:
-    region: "{{ aws_region }}"
-  register: alb_info
-
+- name: Install AWS CLI
+  become: true
+  apt:
+    name: awscli
+    state: present
+  when: ansible_distribution == "Ubuntu"
+  
+- name: Install AWS CLI for Amazon Linux
+  become: true
+  yum:
+    name: awscli
+    state: present
+  when: ansible_distribution == "Amazon"
+  
+- name: Get ALB DNS name using AWS CLI
+  command: aws elbv2 describe-load-balancers --region "{{ aws_region }}" --query "LoadBalancers[?LoadBalancerName=='{{ stack_name }}'].DNSName" --output text
+  register: alb_dns
+  
 - name: Set ALB DNS name fact
   set_fact:
-    ALB_DNS: "{{ alb_info.load_balancers[0].DNSName }}"
-    
+    ALB_DNS: "{{ alb_dns.stdout }}"
+# ALB DNS名の表示
 - name: Display ALB_DNS 
   debug:
     msg: "ALB DNS is {{ ALB_DNS }}"
 
+# development.rbファイルのコピー
 - name: development.rb copy 
   become: true
   template:
     src: development.rb.j2
     dest: "{{ app_dir }}/config/environments/development.rb"
-# nginxのアプリ別設定ファイル
+
+# Nginxのアプリ別設定ファイルのコピー
 - name: nginx the app configfile of copy 
   become: true
   template:
     src: puma.conf.j2
     dest: /etc/nginx/conf.d/puma.conf
-# nginxの全般設定ファイル
+    
+# Nginxの全般設定ファイルのコピー
 - name: nginx the general config of copy 
   become: true
   template:
     src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
 
+# Pumaサービスサンプルファイルの追加
 - name: Add puma.service.sample
   become: true
   template:
     src: puma.service.sample.j2
     dest: /etc/systemd/system/puma.service
 
+# ストレージ設定ファイルのコピー
 - name: copy of storage.yml
   template:
     src: storage.yml.j2
     dest: "{{ app_dir }}/config/storage.yml"
-# ファイルの指定した行に追記するtask、アプリのルートを正しく修正するため
+
+# ファイルの特定行に追記
 - name: "insert or replace directory path"
   lineinfile:  
     path: /home/ec2-user/raisetech-live8-sample-app/config/puma.rb
     insertafter: '^# directory "/var/www/rails/raisetech-live8-sample-app"$'
     line: ' directory "/home/ec2-user/raisetech-live8-sample-app"'
 
+# Nginxの開始
 - name: start nginx
   become: true
   service:
@@ -77,18 +96,20 @@
     state: started
     enabled: true
 
+# bundle installの実行
 - name: bundle install
   shell: bash -lc bundle install
   args:
     chdir: "{{ app_dir}}"
 
+# Railsのインストール
 - name: gem install rails
   shell: "/home/ec2-user/.rbenv/shims/gem install rails"
   environment:
     PATH: "{{ ansible_env.PATH }}:/home/ec2-user/.rbenv/shims:/home/ec2-user/.rbenv/bin"
     RBENV_ROOT: "/home/ec2-user/.rbenv"
 
-
+# デプロイ環境のセットアップ
 - name: deploy environment setup
   shell: |
     bash -lc "bin/setup"
@@ -96,12 +117,13 @@
     chdir: "{{ app_dir }}"
   ignore_errors: true
 
-# mini_magick を使えるように追記した設定ファイルをコピー
+# Railsアプリ設定ファイルのコピー
 - name: configfile copy Rails app
   template:
     src: application.rb.j2
     dest: "{{ app_dir }}/config/application.rb"
 
+# Railsアセットのプリコンパイル
 - name: rails assets:precompile
   shell: |
     bash -lc "rails assets:precompile"
@@ -109,14 +131,14 @@
     chdir: "{{ app_dir }}"
   ignore_errors: true
 
-
-
+# Nginxの再起動
 - name: start nginx
   become: true
   service:
     name: nginx
     state: restarted
   
+# Nginxの再起動
 - name: puma service start 
   become: true
   service:  
