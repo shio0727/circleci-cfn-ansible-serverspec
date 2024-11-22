@@ -87,6 +87,24 @@ Resources:
             - "arn:aws:s3:::<lecture13-clf-bucket>/*"
       Roles:
       - !Ref S3AccessRole
+      
+  ELBPolicyforansible:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: ELBPolicyforansible
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - elasticloadbalancing:DescribeLoadBalancers
+              - elasticloadbalancing:DescribeTags
+              - elasticloadbalancing:DescribeListeners
+              - elasticloadbalancing:DescribeTargetGroups
+              - elasticloadbalancing:DescribeTargetHealth
+            Resource: "*"
+      Roles:
+        - !Ref S3AccessRole
     
   
   S3AccessInstanceProfile:
