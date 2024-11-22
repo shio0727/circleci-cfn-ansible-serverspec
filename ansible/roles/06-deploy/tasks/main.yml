@@ -36,7 +36,9 @@
   when: ansible_distribution == "Amazon"
   
 - name: Get ALB DNS name using AWS CLI
-  command: aws elbv2 describe-load-balancers --region "{{ aws_region }}" --query "LoadBalancers[?LoadBalancerName=='{{ stack_name }}'].DNSName" --output text
+  environment:
+    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+  command: aws elbv2 describe-load-balancers --region "{{ lookup('env', 'AWS_DEFAULT_REGION') }}" --query "LoadBalancers[?LoadBalancerName=='{{ stack_name }}'].DNSName" --output text
   register: alb_dns
   
 - name: Set ALB DNS name fact
