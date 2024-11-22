@@ -22,6 +22,10 @@
     - name: Include 05-mysql
       include_role:
         name: 05-mysql
+        
+    - name: Include 06-deploy
+      include_role:
+        name: 06-deploy
   
   vars: 
     app_dir: /home/ec2-user/raisetech-live8-sample-app
