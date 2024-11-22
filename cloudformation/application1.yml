@@ -79,11 +79,6 @@ Resources:
               - s3:ListBucket
               - s3:DeleteObject
               - s3:GetBucketLocation
-              - elasticloadbalancing:DescribeLoadBalancers
-              - elasticloadbalancing:DescribeTags
-              - elasticloadbalancing:DescribeListeners
-              - elasticloadbalancing:DescribeTargetGroups
-              - elasticloadbalancing:DescribeTargetHealth
           Resource: "arn:aws:s3:::*"
         - Effect: Allow
           Action: "*"

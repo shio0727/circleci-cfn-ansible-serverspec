@@ -12,7 +12,7 @@ Parameters:
     
 Resources:
  # TargetGroup
- ALBTargetGroup: 
+  ALBTargetGroup: 
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Name: !Sub ${NameBase}-tg
@@ -28,7 +28,7 @@ Resources:
       Targets:
         - Id: !ImportValue lecture13-ec2id
  # ALB
- ALB:
+  ALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Type: "application"
@@ -44,7 +44,7 @@ Resources:
         - Key: Name
           Value: !Sub ${NameBase}-alb
  #listener
- ListenerHTTP:
+  ListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
@@ -52,14 +52,14 @@ Resources:
           Type: forward
       LoadBalancerArn: !Ref ALB
       Port: 80
-      Protocol: HTTP  
+      Protocol: HTTP
       
   ELBPolicyforansible:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: describe-elb-policy
+      PolicyName: ELBPolicyforansible
       PolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
           - Effect: Allow
             Action:
@@ -70,9 +70,9 @@ Resources:
               - elasticloadbalancing:DescribeTargetHealth
             Resource: "*"
       Roles:
-        - !Ref ELBRoleforansible
-
-  ELBRoleforansible:
+        - !Ref DescribeELBRole
+        
+  DescribeELBRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -85,6 +85,11 @@ Resources:
             Action:
               - sts:AssumeRole
       Path: /
-      RoleName: describe-elb-role
-
+      RoleName: lecture13-elbrole
+      
+          
+              
+              
+              
+        
   
