@@ -21,7 +21,7 @@
     msg: "{{ nginx_install }}"
     
 - name: Get ALB DNS name
-  amazon.aws.elb_target_group_facts:
+  amazon.aws.elb_application_lb_info:
     region: "{{ aws_region }}"
   register: alb_info
 
