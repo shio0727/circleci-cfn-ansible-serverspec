@@ -1,13 +1,13 @@
 ---
-# Niginxnoのインストール状況確認
-- name: installed nginx
+# Niginxのインストール状況確認
+- name: if nginx is imstalled
   become: true
   shell: nginx -version 
   register: nginx_check
   changed_when: false
   ignore_errors: true
 
-# 
+# Niginxのインストール（チェックが失敗した場合）
 - name: Enable nginx1 repository
   become: true
   command:
@@ -15,13 +15,15 @@
   when: nginx_check is failed
   register:  nginx_install
 
+# Niginxインストールのデバック
 - name: debug_nginx_install
   become: true
   debug:
     msg: "{{ nginx_install }}"
     
+# ALB DNS名の取得
 - name: Get ALB DNS name
-  amazon.aws.elb_application_lb_info:
+  amazon.aws.elb_info:
     region: "{{ aws_region }}"
   register: alb_info
 
