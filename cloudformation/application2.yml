@@ -50,3 +50,5 @@ Resources:
       SubnetIds:
         - !ImportValue lecture13-PrivateSubnet1id
         - !ImportValue lecture13-PrivateSubnet2id
+
+
