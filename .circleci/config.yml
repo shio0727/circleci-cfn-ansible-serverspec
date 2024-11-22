@@ -69,6 +69,10 @@ jobs:
           command: |
             mkdir -p ~/.ansible/collections/ansible_collections
       - run:
+          name: Verify directories
+          command: |
+            ls -la ~/.ansible/collections/
+      - run:
           name: Install Ansible Galaxy Collections
           command: ansible-galaxy collection install amazon.aws
       - run:
