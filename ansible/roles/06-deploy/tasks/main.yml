@@ -1,4 +1,5 @@
 ---
+# Niginxnoのインストール状況確認
 - name: installed nginx
   become: true
   shell: nginx -version 
@@ -6,6 +7,7 @@
   changed_when: false
   ignore_errors: true
 
+# 
 - name: Enable nginx1 repository
   become: true
   command:
@@ -19,18 +21,13 @@
     msg: "{{ nginx_install }}"
     
 - name: Get ALB DNS name
-  aws:
+  amazon.aws.ec2_lc_facts:
     region: "{{ aws_region }}"
-    service: elbv2
-    operation: describe-load-balancers
-    filters:
-      LoadBalancerArns:
-        - "{{ lookup('aws_cfn', 'ALB', stack_name='your-stack-name') }}"
   register: alb_info
 
 - name: Set ALB DNS name fact
   set_fact:
-    ALB_DNS: "{{ alb_info.LoadBalancers[0].DNSName }}"
+    ALB_DNS: "{{ alb_info.load_balancers[0].DNSName }}"
     
 - name: Display ALB_DNS 
   debug:
