@@ -32,7 +32,8 @@
   set_fact:
     ALB_DNS: "{{ alb_info.LoadBalancers[0].DNSName }}"
     
-- name: Display ALB_DNS debug: msg: "ALB DNS is {{ ALB_DNS }}"
+- name: Display ALB_DNS debug: 
+　msg: "ALB DNS is {{ ALB_DNS }}"
 
 - name: development.rb copy 
   become: true
