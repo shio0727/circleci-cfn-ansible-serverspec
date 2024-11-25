@@ -122,11 +122,7 @@ Outputs:
     Export:
       Name: !Sub  ${NameBase}-ec2id  
       
-  ALBDnsName:
-    Description: The DNS name of the ALB
-    Value: !GetAtt ALB.DNSName
-    Export:
-      Name: !Sub ${NameBase}-alb-dns
+  
       
 
   
