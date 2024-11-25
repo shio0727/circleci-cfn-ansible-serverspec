@@ -50,7 +50,7 @@ Resources:
       EIP: !Ref ElasticIP
       
       
-# IAMロールS3接続
+# IAMロールS3接続とAnsible
   S3AccessRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -64,7 +64,7 @@ Resources:
             Action: 
               - "sts:AssumeRole"
       Path: "/"
-  
+# S3の接続のためのポリシー
   Policies:
     Type: AWS::IAM::Policy
     Properties:
@@ -88,6 +88,7 @@ Resources:
       Roles:
       - !Ref S3AccessRole
       
+# Ansibleのためのポリシー    
   ELBPolicyforansible:
     Type: AWS::IAM::Policy
     Properties:
@@ -120,6 +121,12 @@ Outputs:
     Value: !Ref EC2
     Export:
       Name: !Sub  ${NameBase}-ec2id  
+      
+  ALBDnsName:
+    Description: The DNS name of the ALB
+    Value: !GetAtt ALB.DNSName
+    Export:
+      Name: !Sub ${NameBase}-alb-dns
       
 
   
