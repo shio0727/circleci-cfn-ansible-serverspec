@@ -86,7 +86,7 @@
     dest: "{{ app_dir }}/config/storage.yml"
 
 # ファイルの特定行に追記
-- name: "insert or replace directory path"
+- name: insert or replace directory path
   lineinfile:  
     path: /home/ec2-user/raisetech-live8-sample-app/config/puma.rb
     insertafter: '^# directory "/var/www/rails/raisetech-live8-sample-app"$'
