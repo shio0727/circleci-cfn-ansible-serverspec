@@ -45,7 +45,7 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - run:  # RDSのパスワードの変数取得とS3の名前の取得
+      - run:  # 環境変数の設定
           name: set environment variables in env_vars.sh
           command: |
             RDSResourceId=$(aws cloudformation describe-stack-resources --stack-name '<< pipeline.parameters.stack-name >>-rds' --query "StackResources[?ResourceType=='AWS::RDS::DBInstance'].PhysicalResourceId" --output text)
@@ -54,8 +54,6 @@ jobs:
             echo export RDSUser=$(aws rds describe-db-instances --db-instance-identifier $RDSResourceId --query DBInstances[].MasterUsername[] --output text) >> env_vars.sh
             S3_bucket_name=$(aws cloudformation describe-stacks --stack-name application-layer-stack --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
             echo export S3_bucket_name=$S3_bucket_name >> env_vars.sh
-            ALB_DNS=$(aws cloudformation describe-stacks --stack-name application-layer-stack --query "Stacks[0].Outputs[?OutputKey=='ALBDNSName'].OutputValue" --output text)
-            echo export ALB_DNS=$ALB_DNS >> env_vars.sh
             
   execute-ansible:
     executor: ansible-playbook/default
