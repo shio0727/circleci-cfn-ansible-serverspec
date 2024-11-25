@@ -21,6 +21,7 @@
   debug:
     msg: "{{ nginx_install }}"
     
+# AWS CLIのインストール
 - name: Install AWS CLI
   become: true
   apt:
@@ -28,6 +29,7 @@
     state: present
   when: ansible_distribution == "Ubuntu"
   
+# 
 - name: Install AWS CLI for Amazon Linux
   become: true
   yum:
@@ -147,3 +149,7 @@
     name: puma.service
     state: restarted
     enabled: true
+    
+- name: Ensure S3 bucket is defined
+  debug:
+    msg: "S3 bucket name is {{ S3_bucket_name }}"
