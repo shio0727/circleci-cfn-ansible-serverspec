@@ -35,3 +35,4 @@
     aws_region: "AWS_DEFAULT_REGION"
     stack_name: "application3.yml"
     S3_bucket_name: "{{ lookup('env', 'S3_bucket_name') }}"
+    alb_dns: "{{ lookup('env', 'ALB_DNS') }}"
