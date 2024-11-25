@@ -123,6 +123,3 @@ Outputs:
       Name: !Sub  ${NameBase}-ec2id  
       
   
-      
-
-  
