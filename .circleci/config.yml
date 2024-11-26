@@ -65,6 +65,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
+      - run:
+          name: Print ALB DNS Name
+          command: echo $ALB_DNS_NAME
       - add_ssh_keys:
           fingerprints:
             - SHA256:1L4djQiuMIWSJwXsMSIW9HJqz7IjPsQpARLqhU6H+o0
