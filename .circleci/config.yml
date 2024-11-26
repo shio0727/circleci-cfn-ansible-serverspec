@@ -88,6 +88,11 @@ jobs:
       - run:
           name: Install Ansible Galaxy Collections
           command: ansible-galaxy collection install community.mysql
+      - attach_workspace:
+          at: /workspace
+      - run:
+          name: source environment variables
+          command: source /workspace/env_vars.sh
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
