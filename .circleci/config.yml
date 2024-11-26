@@ -45,9 +45,6 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - run:
-          name: Create workspace directory
-          command: mkdir -p /workspace
       - run:  # 環境変数の設定
           name: set environment variables in env_vars.sh
           command: |
@@ -69,6 +66,8 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - add_ssh_keys:
           fingerprints:
             - SHA256:1L4djQiuMIWSJwXsMSIW9HJqz7IjPsQpARLqhU6H+o0
