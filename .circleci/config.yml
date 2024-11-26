@@ -110,9 +110,7 @@ jobs:
             sed -i "s/$DNS_NAME/${DNS_NAME}/g" ansible/playbook.yml
             sed -i "s/$S3_bucket_name/${$S3_bucket_name}/g" ansible/playbook.yml
             cat ansible/playbook.yml
-    no_output_timeout: 30m
-
-
+          no_output_timeout: 30m
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
