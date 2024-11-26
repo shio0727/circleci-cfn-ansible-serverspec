@@ -77,12 +77,6 @@ jobs:
           name: Install Ansible
           command: pip install ansible
       - run:
-          name: Use Environment Variable
-          command: |
-            source .env_var
-            echo 
-            
-      - run:
           name: Create required directories
           command: |
             mkdir -p ~/.ansible/collections/ansible_collections
