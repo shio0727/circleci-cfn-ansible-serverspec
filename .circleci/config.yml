@@ -45,6 +45,9 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
+      - run:
+          name: Create workspace directory
+          command: mkdir -p /workspace
       - run:  # 環境変数の設定
           name: set environment variables in env_vars.sh
           command: |
