@@ -20,36 +20,6 @@
   become: true
   debug:
     msg: "{{ nginx_install }}"
-    
-# AWS CLIのインストール
-- name: Install AWS CLI
-  become: true
-  apt:
-    name: awscli
-    state: present
-  when: ansible_distribution == "Ubuntu"
-  
-# 
-- name: Install AWS CLI for Amazon Linux
-  become: true
-  yum:
-    name: awscli
-    state: present
-  when: ansible_distribution == "Amazon"
-  
-- name: Get ALB DNS name using AWS CLI
-  environment:
-    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
-  command: aws elbv2 describe-load-balancers --region "{{ lookup('env', 'AWS_DEFAULT_REGION') }}" --query "LoadBalancers[?LoadBalancerName=='{{ stack_name }}'].DNSName" --output text
-  register: alb_dns
-  
-- name: Set ALB DNS name fact
-  set_fact:
-    ALB_DNS: "{{ alb_dns.stdout }}"
-# ALB DNS名の表示
-- name: Display ALB_DNS 
-  debug:
-    msg: "ALB DNS is {{ ALB_DNS }}"
 
 # development.rbファイルのコピー
 - name: development.rb copy 
@@ -58,6 +28,13 @@
     src: development.rb.j2
     dest: "{{ app_dir }}/config/environments/development.rb"
     
+  # nginxのアプリ別設定ファイル
+- name: nginx the app configfile of copy 
+  become: true
+  template:
+    src: puma.conf.j2
+    dest: /etc/nginx/conf.d/puma.conf
+    
 # Nginxの全般設定ファイルのコピー
 - name: nginx the general config of copy 
   become: true
@@ -65,17 +42,11 @@
     src: nginx.conf.j2
     dest: /etc/nginx/nginx.conf
 
-# Pumaサービスサンプルファイルの追加
 - name: Add puma.service.sample
   become: true
   template:
     src: puma.service.sample.j2
     dest: /etc/systemd/system/puma.service
-    
-- name: Set puma.rb from template
-  template:
-    src: puma.rb.j2
-    dest: "{{ app_dir }}/config/puma.rb"
 
 # ストレージ設定ファイルのコピー
 - name: copy of storage.yml
