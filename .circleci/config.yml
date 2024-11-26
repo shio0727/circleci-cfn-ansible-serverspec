@@ -54,7 +54,7 @@ jobs:
             echo export RDSUser=$(aws rds describe-db-instances --db-instance-identifier $RDSResourceId --query DBInstances[].MasterUsername[] --output text) >> env_vars.sh
             S3_bucket_name=$(aws cloudformation describe-stacks --stack-name application-layer-stack --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
             echo export S3_bucket_name=$S3_bucket_name >> env_vars.sh
-            ALB_DNS=$(aws cloudformation describe-stacks --stack-name lecture13-app3-stack --query "Stacks[0].Outputs[?OutputKey=='ALBDnsName'].OutputValue" --output text)
+            ALB_DNS=$(aws cloudformation describe-stacks --region ap-northeast-1 --stack-name lecture13-app3-stack --query "Stacks[0].Outputs[?OutputKey=='ALBDnsName'].OutputValue" --output text)
             echo export ALB_DNS=$ALB_DNS >> env_vars.sh
             
       - persist_to_workspace:
