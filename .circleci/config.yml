@@ -93,14 +93,14 @@ jobs:
       - run:
           name: Use Environment Variable
           command: |
-            source .env_var
+            source env_vars.sh
             echo $RDSResourceId
             echo $DNS_NAME
             echo $S3_bucket_name
       - run:
           name: Replacing environment variables in Sed
           command: |
-            source .env_var
+            source env_vars.sh
             sed -i "s/$DNS_NAME/${DNS_NAME}/g" ansible/playbook.yml
             sed -i "s/$S3_bucket_name/${$S3_bucket_name}/g" ansible/playbook.yml
             cat ansible/playbook.yml
