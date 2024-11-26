@@ -63,8 +63,8 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
-      - attach_workspace:
-          at: .
+      - aws-cli/setup:
+          alb_dns: ALB_DNS_NAME
       - run:
           name: Print ALB DNS Name
           command: echo $ALB_DNS_NAME
