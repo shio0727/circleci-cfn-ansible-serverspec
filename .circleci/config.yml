@@ -48,12 +48,15 @@ jobs:
       - run:  # 環境変数の設定
           name: set environment variables in env_vars.sh
           command: |
+            STACK_NAME="lecture13-app3-stack"
             RDSResourceId=$(aws cloudformation describe-stack-resources --stack-name '<< pipeline.parameters.stack-name >>-rds' --query "StackResources[?ResourceType=='AWS::RDS::DBInstance'].PhysicalResourceId" --output text)
             echo export RDSResourceId=$RDSResourceId >> env_vars.sh   # Having separated export from input, due to avoiding "empty $RDSResourceId" error
             echo export RDSEndPoint=$(aws rds describe-db-instances --db-instance-identifier $RDSResourceId --query DBInstances[].Endpoint.Address --output text) >> env_vars.sh
             echo export RDSUser=$(aws rds describe-db-instances --db-instance-identifier $RDSResourceId --query DBInstances[].MasterUsername[] --output text) >> env_vars.sh
             S3_bucket_name=$(aws cloudformation describe-stacks --stack-name application-layer-stack --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
             echo export S3_bucket_name=$S3_bucket_name >> env_vars.sh
+            DNS_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='ALBEndpoint'].OutputValue" --output text --region ap-northeast-1)
+            echo "export DNS_NAME=$DNS_NAME" >> env_vars.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -63,11 +66,6 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
-      - aws-cli/setup:
-          alb_dns: ALB_DNS_NAME
-      - run:
-          name: Print ALB DNS Name
-          command: echo $ALB_DNS_NAME
       - add_ssh_keys:
           fingerprints:
             - SHA256:1L4djQiuMIWSJwXsMSIW9HJqz7IjPsQpARLqhU6H+o0
