@@ -46,7 +46,7 @@ jobs:
     steps:
       - checkout
       - run:  # 環境変数の設定
-          name: set environment variables in .env_var
+          name: set environment variables in env_vars.sh
           command: |
             # Define variables
             # スタックの名前とシクレットマネージャーの名前を設定
@@ -57,20 +57,20 @@ jobs:
             REGION="ap-northeast-1"
             # RDSのエンドポイントを環境変数に設定
             RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
-            echo "export RDS_ENDPOINT=$(printf '%q' $RDS_ENDPOINT)" >> .env_var
+            echo "export RDS_ENDPOINT=$(printf '%q' $RDS_ENDPOINT)" >> env_vars.sh
             # RDSのパスワードを環境変数に設定
             RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query "SecretString" --output text --region $REGION | jq -r '.password')
-            echo "export RDS_PASSWORD=$(printf '%q' $RDS_PASSWORD)" >> .env_var
+            echo "export RDS_PASSWORD=$(printf '%q' $RDS_PASSWORD)" >> env_vars.sh
             # ロードバランサーのDNSを環境変数に出力して設定
             DNS_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME2 --query "Stacks[0].Outputs[?OutputKey=='ALBEndpoint'].OutputValue" --output text --region $REGION)
-            echo "export DNS_NAME=$DNS_NAME" >> .env_var
+            echo "export DNS_NAME=$DNS_NAME" >> env_vars.sh
             # S3を出力して環境変数に設定
             S3_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME3 --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
-            echo "export S3_NAME=$S3_NAME" >> .env_var
+            echo "export S3_NAME=$S3_NAME" >> env_vars.sh
       - run:
           name: check environment variables
           command: |
-            source .env_var
+            source env_vars.sh
             echo "RDS_ENDPOINT: $RDS_ENDPOINT"
             echo "RDS_PASSWORD: $RDS_PASSWORD"
             echo "DNS_NAME: $DNS_NAME"
@@ -79,7 +79,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - .env_var
+            - env_vars.sh
             
   execute-ansible:
     executor: ansible-playbook/default
