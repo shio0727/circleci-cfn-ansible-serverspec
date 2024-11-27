@@ -112,7 +112,7 @@ jobs:
       - run:
           name: Use Environment Variable
           command: |
-            source .env_var
+            source env_vars.sh
             echo $RDS_ENDPOINT
             echo $RDS_PASSWORD
             echo $DNS_NAME
@@ -120,7 +120,7 @@ jobs:
       - run:
           name: Replacing environment variables in Sed
           command: |
-            source .env_var
+            source env_vars.sh
             sed -i "s/RDS_ENDPOINT/${RDS_ENDPOINT}/g" ansible/playbook.yml
             sed -i "s/RDS_PASSWORD/${RDS_PASSWORD}/g" ansible/playbook.yml
             sed -i "s/DNS_NAME/${DNS_NAME}/g" ansible/playbook.yml
