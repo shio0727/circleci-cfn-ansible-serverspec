@@ -67,6 +67,10 @@ jobs:
             # S3を出力して環境変数に設定
             S3_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME3 --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
             echo "export S3_NAME=$S3_NAME" >> env_vars.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - env_vars.sh
       - run:
           name: check environment variables
           command: |
@@ -76,11 +80,7 @@ jobs:
             echo "DNS_NAME: $DNS_NAME"
             echo "S3_NAME: $S3_NAME"
           no_output_timeout: 30m
-      - persist_to_workspace:
-          root: .
-          paths:
-            - env_vars.sh
-            
+          
   execute-ansible:
     executor: ansible-playbook/default
     steps:
