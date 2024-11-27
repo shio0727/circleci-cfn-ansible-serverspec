@@ -87,6 +87,19 @@
     group: ec2-user
     recurse: yes
     
+- name: Install development tools
+  yum:
+    name: "@Development tools"
+    state: present
+    
+- name: Install additional libraries
+  yum:
+    name:
+      - openssl-devel
+      - readline-devel
+      - zlib-devel
+    state: present
+    
 - name: Run bundle install as normal user 
   become: no
   shell: bash -lc 'bundle install'
