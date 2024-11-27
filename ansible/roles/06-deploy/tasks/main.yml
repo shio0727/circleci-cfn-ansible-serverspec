@@ -71,6 +71,7 @@
 
 # bundle installの実行
 - name: bundle install
+  become: no
   shell: bash -lc bundle install
   args:
     chdir: "{{ app_dir}}"
