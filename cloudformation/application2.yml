@@ -50,10 +50,10 @@ Resources:
       SubnetIds:
         - !ImportValue lecture13-PrivateSubnet1id
         - !ImportValue lecture13-PrivateSubnet2id
-Outputs:     
+Outputs:
   RDSInstanceEndpoint:
     Description: "The connection endpoint"
-    Value: !GetAtt RDSInstance.Endpoint.Address
+    Value: !GetAtt RDS.Endpoint.Address
     
   RDSSecret:
     Description: "RDS password"
