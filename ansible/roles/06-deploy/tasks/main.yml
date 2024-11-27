@@ -28,13 +28,6 @@
     src: development.rb.j2
     dest: "{{ app_dir }}/config/environments/development.rb"
     
-- name: Add allowed hosts to production.rb
-  lineinfile:
-    path: "{{ app_dir }}/config/environments/development.rb"
-    line: 'config.hosts << ENV["ALB_DNS"]'
-    create: yes
-
-    
   # nginxのアプリ別設定ファイル
 - name: nginx the app configfile of copy 
   become: true
