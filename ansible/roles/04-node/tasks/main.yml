@@ -78,3 +78,9 @@
     HOME: "/home/{{ ansible_user }}"
     USER: "{{ ansible_user }}"
   when: yarn_check is failed
+  
+- name: Run bundle install as normal user 
+  become: no
+  shell: bash -lc 'bundle install'
+  args:
+    chdir: "{{ app_dir }}"

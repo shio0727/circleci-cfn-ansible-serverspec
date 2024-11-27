@@ -68,14 +68,7 @@
     name: nginx
     state: started
     enabled: true
-
-# bundle installの実行
-- name: bundle install
-  become: no
-  shell: bash -lc bundle install
-  args:
-    chdir: "{{ app_dir}}"
-
+    
 # Railsのインストール
 - name: gem install rails
   shell: "/home/ec2-user/.rbenv/shims/gem install rails"
