@@ -105,7 +105,7 @@
     name: nginx
     state: restarted
   
-# Nginxの再起動
+# Pumaの再起動
 - name: puma service start 
   become: true
   service:  
