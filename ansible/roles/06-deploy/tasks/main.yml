@@ -20,6 +20,38 @@
   become: true
   debug:
     msg: "{{ nginx_install }}"
+    
+# DNS名の出力
+- name: Get CloudFormation stack outputs
+  community.aws.cloudformation_info:
+    stack_name: "application3.yml"
+  register: stack_info
+  
+- name: Set ALB DNS name fact
+　set_fact:
+　  dns_name: "{{ stack_info.stacks[0].outputs | selectattr('output_key', 'eq', 'LoadBalancerDNSName') | map(attribute='output_value') | first }}"
+　  
+- name: Export DNS name to environment variable
+  ansible.builtin.set_environment:
+    DNS_NAME: "{{ dns_name }}"
+    
+- name: Debug ALB DNS name
+  debug:
+    msg: "ALB DNS name is {{ dns_name }}"
+    
+# S3名の出力
+- name: Get CloudFormation stack outputs  
+　community.aws.cloudformation_info:
+　  stack_name: application4.yml
+　register: stack_info_second
+　
+- name: Set S3 bucket name fact
+  set_fact:
+    s3_bucket_name: "{{ stack_info_second.stacks[0].outputs | selectattr('output_key', 'eq', 'S3BucketName') | map(attribute='output_value') | first }}"
+    
+- name: Export S3 bucket name to environment variable
+  ansible.builtin.set_environment:
+  S3_BUCKET_NAME: "{{ s3_bucket_name }}"
 
 # development.rbファイルのコピー
 - name: development.rb copy 
