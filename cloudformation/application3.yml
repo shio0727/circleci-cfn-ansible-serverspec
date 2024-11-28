@@ -54,7 +54,6 @@ Resources:
       Port: 80
       Protocol: HTTP
       
-  Resources:
   StoreDNSNameParameter:
     Type: "AWS::SSM::Parameter"
     Properties:
