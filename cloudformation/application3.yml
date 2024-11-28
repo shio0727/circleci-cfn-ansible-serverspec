@@ -53,8 +53,21 @@ Resources:
       LoadBalancerArn: !Ref ALB
       Port: 80
       Protocol: HTTP
+      
+  Resources:
+  StoreDNSNameParameter:
+    Type: "AWS::SSM::Parameter"
+    Properties:
+      Name: "/loadbalancer/dnsname"
+      Type: "String"
+      Value: !GetAtt
+        - ALB
+        - DNSName
+
         
 Outputs:
-  ALBEndpoint:
+  ALBDNS:
     Description: "The DNS name of the ALB"
     Value: !GetAtt ALB.DNSName
+    Export:
+      Name: "LoadBalancerDNSName"

@@ -36,6 +36,7 @@ Outputs:
     Description: The name of the S3 bucket
     Value: !Ref S3Bucket
     Export:
-      Name: !Sub ${NameBase}-s3bucket
+      Name: "S3BucketName"
+      
     
 
