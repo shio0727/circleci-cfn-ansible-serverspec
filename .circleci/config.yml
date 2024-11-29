@@ -1,10 +1,16 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/configuration-reference
 version: 2.1
+
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.3
   aws-cloudformation: orbss/aws-cloudformation@0.1.6
   ansible-playbook: orbss/ansible-playbook@0.0.5
+ 
 
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   execute-cloudformation:
     executor: aws-cloudformation/default
@@ -34,23 +40,32 @@ jobs:
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app4-stack"
           template-file-path: "cloudformation/application4.yml"
-      - run:
-          name: Get ALB DNS Name
-          command: |
-            export DNS_NAME=$(aws cloudformation describe-stacks --stack-name  application3.yml --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text)
-            echo "DNS_NAME=${DNS_NAME}" >> $BASH_ENV
-      - run:
-          name: Get S3 Bucket Name
-          command: |
-            export S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name application4.yml --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
-            echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $BASH_ENV
           
+  get-variables-from-cfn:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - run:  # 環境変数の設定
+          name: set environment variables in env_vars.sh
+          command: |
+            RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name application2.yml --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
+            echo "export RDS_ENDPOINT=$(printf '%q' $RDS_ENDPOINT)" >> .env
+            RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id application2.yml --query "SecretString" --output text --region $REGION | jq -r '.password')
+            echo "export RDS_PASSWORD=$(printf '%q' $RDS_PASSWORD)" >> .env
+            DNS_NAME=$(aws cloudformation describe-stacks --stack-name application3.yml --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text --region $REGION)
+            echo "export DNS_NAME=$DNS_NAME" >> .env_var
+            S3_NAME=$(aws cloudformation describe-stacks --stack-name application4.yml --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .env
+            
   execute-ansible:
-    docker:
-      - image: circleci/python:3.8
     executor: ansible-playbook/default
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - add_ssh_keys:
           fingerprints:
             - SHA256:1L4djQiuMIWSJwXsMSIW9HJqz7IjPsQpARLqhU6H+o0
@@ -60,26 +75,44 @@ jobs:
           name: Install Ansible
           command: pip install ansible
       - run:
-          name: Verify DNS_NAME and S3_BUCKET_NAME
-          command: |
-            echo "DNS_NAME is $DNS_NAME"
-            echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
-      - run:
           name: Create required directories
-          command: mkdir -p ~/.ansible/collections/ansible_collections
+          command: |
+            mkdir -p ~/.ansible/collections/ansible_collections
       - run:
           name: Verify directories
-          command: ls -la ~/.ansible/collections/
+          command: |
+            ls -la ~/.ansible/collections/
       - run:
           name: Install Ansible Galaxy Collections
+          command: ansible-galaxy collection install amazon.aws
+      - run:
+          name: Install Ansible Galaxy Collections
+          command: ansible-galaxy collection install community.mysql
+      - run:
+          name: Use Environment Variable
           command: |
-            ansible-galaxy collection install amazon.aws
-            ansible-galaxy collection install community.mysql
-            ansible-galaxy collection install community.aws:3.1.0 --server https://galaxy.ansible.com/ || echo "Failed to install community.aws"
+            source .env
+            echo $RDS_ENDPOINT
+            echo $RDS_PASSWORD
+            echo $DNS_NAME
+            echo $S3_NAME
+      - run:
+          name: Replacing environment variables in Sed
+          command: |
+            source .env
+            sed -i "s/RDS_ENDPOINT/${RDS_ENDPOINT}/g" ansible/playbook.yml
+            sed -i "s/RDS_PASSWORD/${RDS_PASSWORD}/g" ansible/playbook.yml
+            sed -i "s/DNS_NAME/${DNS_NAME}/g" ansible/playbook.yml
+            sed -i "s/S3_NAME/${S3_NAME}/g" ansible/playbook.yml
+            cat ansible/playbook.yml
+          no_output_timeout: 30m
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
-
+      
+          
+# Orchestrate jobs using workflows
+# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   lecture13-workflow:
     jobs:
@@ -87,3 +120,6 @@ workflows:
       - execute-ansible:
           requires:
             - execute-cloudformation
+  
+# This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
