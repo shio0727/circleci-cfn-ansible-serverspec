@@ -1,16 +1,10 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
-
 
 orbs:
   aws-cli: circleci/aws-cli@4.1.3
   aws-cloudformation: orbss/aws-cloudformation@0.1.6
   ansible-playbook: orbss/ansible-playbook@0.0.5
- 
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   execute-cloudformation:
     executor: aws-cloudformation/default
@@ -55,25 +49,23 @@ jobs:
           command: pip install ansible
       - run:
           name: Create required directories
-          command: |
-            mkdir -p ~/.ansible/collections/ansible_collections
+          command: mkdir -p ~/.ansible/collections/ansible_collections
       - run:
           name: Verify directories
+          command: ls -la ~/.ansible/collections/
+      - run:
+          name: Install Ansible Galaxy Collections
           command: |
-            ls -la ~/.ansible/collections/
-      - run:
-          name: Install Ansible Galaxy Collections
-          command: ansible-galaxy collection install amazon.aws
-      - run:
-          name: Install Ansible Galaxy Collections
-          command: ansible-galaxy collection install community.mysql
+            ansible-galaxy collection install amazon.aws
+            ansible-galaxy collection install community.mysql
+            ansible-galaxy collection install community.aws
       - run:
           name: Install Ansible community.aws collection
+          command: ansible-galaxy collection install community.aws
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+
 workflows:
   lecture13-workflow:
     jobs:
@@ -81,6 +73,3 @@ workflows:
       - execute-ansible:
           requires:
             - execute-cloudformation
-  
-# This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
