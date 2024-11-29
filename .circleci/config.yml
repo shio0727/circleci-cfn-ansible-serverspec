@@ -63,13 +63,11 @@ jobs:
             ls -la ~/.ansible/collections/
       - run:
           name: Install Ansible Galaxy Collections
-          command: ansible-galaxy collection install amazon.aws
-      - run:
-          name: Install Ansible Galaxy Collections
-          command: ansible-galaxy collection install community.mysql
-      - run:
-          name: Install Ansible community.aws collection
-          command: ansible-galaxy collection install community.aws
+          command: |
+            ansible-galaxy collection install amazon.aws
+            ansible-galaxy collection install community.mysql
+            ansible-galaxy collection install community.aws
+          　　　　
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
