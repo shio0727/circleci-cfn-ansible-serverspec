@@ -21,8 +21,6 @@
   debug:
     msg: "{{ nginx_install }}"
     
-collections:
-  - community.aws
   
 # DNS名の出力
 - name: Get CloudFormation stack outputs
@@ -56,8 +54,6 @@ collections:
   ansible.builtin.set_environment:
     S3_BUCKET_NAME: "{{ s3_bucket_name }}"
     
-collections: []
-
 # development.rbファイルのコピー
 - name: development.rb copy
   become: true

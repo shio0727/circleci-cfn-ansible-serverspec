@@ -1,4 +1,5 @@
 ---
+# Gitのインストール
 - name: Install git
   become: true
   yum:

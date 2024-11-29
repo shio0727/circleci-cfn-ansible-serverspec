@@ -1,10 +1,12 @@
 ---
+# yumのアップデート
 - name: yum update all package
   become: true
   ansible.builtin.yum:
    name: '*'
    state: latest
-   #yumのアップデート
+   
+# yumのパッケージインストール   
 - name: yum install package
   become: true
   ansible.builtin.yum:
