@@ -34,6 +34,4 @@
     EndpointAddress: "RDS_ENDPOINT"
     aws_region: "AWS_DEFAULT_REGION"
     stack_name: "application3.yml"
-    S3_bucket_name: "S3_NAME"
-    ALB_DNS: "DNS_NAME"
    
