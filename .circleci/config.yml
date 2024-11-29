@@ -117,9 +117,12 @@ workflows:
   lecture13-workflow:
     jobs:
       - execute-cloudformation
-      - execute-ansible:
+      - get-variables-from-cfn:
           requires:
             - execute-cloudformation
+      - execute-ansible:
+          requires:
+            - get-variables-from-cfn
   
 # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
