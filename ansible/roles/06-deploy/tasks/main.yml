@@ -33,8 +33,7 @@
     dns_name: "{{ stack_info.stacks[0].outputs | selectattr('output_key', 'eq', 'LoadBalancerDNSName') | map(attribute='output_value') | first }}"
 
 - name: Export DNS name to environment variable
-  ansible.builtin.set_environment:
-    DNS_NAME: "{{ dns_name }}"
+  local_action: shell echo "DNS_NAME={{ alb_dns_name }}" >> $BASH_ENV
 
 - name: Debug ALB DNS name
   debug:
