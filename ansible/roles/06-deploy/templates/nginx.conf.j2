@@ -44,7 +44,7 @@ http {
     server {
         listen       80;
         listen       [::]:80;
-        server_name  {{ DNS_NAME }};
+        server_name  {{ lookup('env', 'DNS_NAME') }};
       #  root         /usr/share/nginx/html;
         root         /home/ec2-user/raisetech-live8-sample-app;  
 
