@@ -36,19 +36,17 @@ jobs:
           template-file-path: "cloudformation/application4.yml"
           
   execute-ansible:
-    executor: ansible-playbook/default
     docker:
       - image: circleci/python:3.8
+    executor: ansible-playbook/default
     steps:
       - checkout
       - add_ssh_keys:
           fingerprints:
             - SHA256:1L4djQiuMIWSJwXsMSIW9HJqz7IjPsQpARLqhU6H+o0
-      - ansible-playbook/install:
-          version: 2.9.23
       - run:
           name: Install Ansible
-          command: pip install ansible
+          command: pip install ansible==2.15.0
       - run:
           name: Create required directories
           command: mkdir -p ~/.ansible/collections/ansible_collections
