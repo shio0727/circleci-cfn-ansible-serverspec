@@ -1,6 +1,6 @@
 ---
 # Niginxのインストール状況確認
-- name: if nginx is imstalled
+- name: if nginx is installed
   become: true
   shell: nginx -version 
   register: nginx_check
@@ -13,62 +13,62 @@
   command:
     cmd: amazon-linux-extras install -y nginx1
   when: nginx_check is failed
-  register:  nginx_install
+  register: nginx_install
 
-# Niginxインストールのデバック
+# Niginxインストールのデバッグ
 - name: debug_nginx_install
   become: true
   debug:
     msg: "{{ nginx_install }}"
-    
+
 # DNS名の出力
 - name: Get CloudFormation stack outputs
   community.aws.cloudformation_info:
     stack_name: "application3.yml"
   register: stack_info
-  
+
 - name: Set ALB DNS name fact
-　set_fact:
-　  dns_name: "{{ stack_info.stacks[0].outputs | selectattr('output_key', 'eq', 'LoadBalancerDNSName') | map(attribute='output_value') | first }}"
-　  
+  set_fact:
+    dns_name: "{{ stack_info.stacks[0].outputs | selectattr('output_key', 'eq', 'LoadBalancerDNSName') | map(attribute='output_value') | first }}"
+
 - name: Export DNS name to environment variable
   ansible.builtin.set_environment:
     DNS_NAME: "{{ dns_name }}"
-    
+
 - name: Debug ALB DNS name
   debug:
     msg: "ALB DNS name is {{ dns_name }}"
-    
+
 # S3名の出力
-- name: Get CloudFormation stack outputs  
-　community.aws.cloudformation_info:
-　  stack_name: application4.yml
-　register: stack_info_second
-　
+- name: Get CloudFormation stack outputs
+  community.aws.cloudformation_info:
+    stack_name: application4.yml
+  register: stack_info_second
+
 - name: Set S3 bucket name fact
   set_fact:
     s3_bucket_name: "{{ stack_info_second.stacks[0].outputs | selectattr('output_key', 'eq', 'S3BucketName') | map(attribute='output_value') | first }}"
-    
+
 - name: Export S3 bucket name to environment variable
   ansible.builtin.set_environment:
-  S3_BUCKET_NAME: "{{ s3_bucket_name }}"
+    S3_BUCKET_NAME: "{{ s3_bucket_name }}"
 
 # development.rbファイルのコピー
-- name: development.rb copy 
+- name: development.rb copy
   become: true
   template:
     src: development.rb.j2
     dest: "{{ app_dir }}/config/environments/development.rb"
-    
-  # nginxのアプリ別設定ファイル
-- name: nginx the app configfile of copy 
+
+# nginxのアプリ別設定ファイル
+- name: nginx the app configfile of copy
   become: true
   template:
     src: puma.conf.j2
     dest: /etc/nginx/conf.d/puma.conf
-    
+
 # Nginxの全般設定ファイルのコピー
-- name: nginx the general config of copy 
+- name: nginx the general config of copy
   become: true
   template:
     src: nginx.conf.j2
@@ -88,10 +88,10 @@
 
 # ファイルの特定行に追記
 - name: insert or replace directory path
-  lineinfile:  
+  lineinfile:
     path: /home/ec2-user/raisetech-live8-sample-app/config/puma.rb
     insertafter: '^# directory "/var/www/rails/raisetech-live8-sample-app"$'
-    line: ' directory "/home/ec2-user/raisetech-live8-sample-app"'
+    line: 'directory "/home/ec2-user/raisetech-live8-sample-app"'
 
 # Nginxの開始
 - name: start nginx
@@ -100,7 +100,7 @@
     name: nginx
     state: started
     enabled: true
-    
+
 # Railsのインストール
 - name: gem install rails
   shell: "/home/ec2-user/.rbenv/shims/gem install rails"
@@ -136,15 +136,15 @@
   service:
     name: nginx
     state: restarted
-  
+
 # Pumaの再起動
-- name: puma service start 
+- name: puma service start
   become: true
-  service:  
+  service:
     name: puma.service
     state: restarted
     enabled: true
-    
+
 - name: Ensure S3 bucket is defined
   debug:
-    msg: "S3 bucket name is {{ S3_bucket_name }}"
+    msg: "S3 bucket name is {{ s3_bucket_name }}"
