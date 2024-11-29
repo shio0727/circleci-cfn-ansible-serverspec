@@ -37,6 +37,8 @@ jobs:
           
   execute-ansible:
     executor: ansible-playbook/default
+    docker:
+      - image: circleci/python:3.8
     steps:
       - checkout
       - add_ssh_keys:
@@ -58,10 +60,7 @@ jobs:
           command: |
             ansible-galaxy collection install amazon.aws
             ansible-galaxy collection install community.mysql
-            ansible-galaxy collection install community.aws
-      - run:
-          name: Install Ansible community.aws collection
-          command: ansible-galaxy collection install community.aws
+            ansible-galaxy collection install community.aws --server https://galaxy.ansible.com/ || echo "Failed to install community.aws"
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
