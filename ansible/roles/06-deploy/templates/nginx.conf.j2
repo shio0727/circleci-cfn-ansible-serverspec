@@ -43,8 +43,8 @@ http {
 
     server {
         listen       80;
-        listen       [::]:80;
-        server_name  {{ lookup('env', 'DNS_NAME') }};
+        listen       [::]:80;{{ ALB_DNS }};
+        server_name  
       #  root         /usr/share/nginx/html;
         root         /home/ec2-user/raisetech-live8-sample-app;  
 
