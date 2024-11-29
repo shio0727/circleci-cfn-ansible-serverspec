@@ -34,6 +34,16 @@ jobs:
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app4-stack"
           template-file-path: "cloudformation/application4.yml"
+      - run:
+          name: Get ALB DNS Name
+          command: |
+            export DNS_NAME=$(aws cloudformation describe-stacks --stack-name  application3.yml --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text)
+            echo "DNS_NAME=${DNS_NAME}" >> $BASH_ENV
+      - run:
+          name: Get S3 Bucket Name
+          command: |
+            export S3_BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name application4.yml --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
+            echo "S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $BASH_ENV
           
   execute-ansible:
     docker:
@@ -49,6 +59,11 @@ jobs:
       - run:
           name: Install Ansible
           command: pip install ansible
+      - run:
+          name: Verify DNS_NAME and S3_BUCKET_NAME
+          command: |
+            echo "DNS_NAME is $DNS_NAME"
+            echo "S3_BUCKET_NAME is $S3_BUCKET_NAME"
       - run:
           name: Create required directories
           command: mkdir -p ~/.ansible/collections/ansible_collections
