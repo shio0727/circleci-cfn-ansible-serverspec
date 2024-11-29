@@ -56,13 +56,15 @@ jobs:
             STACK_NAME=application2.yml
             STACK_NAME2=application3.yml
             STACK_NAME3=application4.yml
-            RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
+            SECRET_NAME="RDSSecret"
+            
+            RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
             echo "export RDS_ENDPOINT=$(printf '%q' $RDS_ENDPOINT)" >> .env
-            RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id STACK_NAME --query "SecretString" --output text --region $REGION | jq -r '.password')
+            RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query "SecretString" --output text --region $REGION | jq -r '.password')
             echo "export RDS_PASSWORD=$(printf '%q' $RDS_PASSWORD)" >> .env
-            DNS_NAME=$(aws cloudformation describe-stacks --stack-name STACK_NAME2 --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text --region $REGION)
+            DNS_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME2 --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text --region $REGION)
             echo "export DNS_NAME=$DNS_NAME" >> .env
-            S3_NAME=$(aws cloudformation describe-stacks --stack-name STACK_NAME3 --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
+            S3_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME3 --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
       - persist_to_workspace:
           root: .
           paths:
