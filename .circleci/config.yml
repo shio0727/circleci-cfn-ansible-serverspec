@@ -52,6 +52,7 @@ jobs:
       - run:  # 環境変数の設定
           name: set environment variables in env_vars.sh
           command: |
+            REGION="ap-northeast-1"
             RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name application2.yml --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
             echo "export RDS_ENDPOINT=$(printf '%q' $RDS_ENDPOINT)" >> .env
             RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id application2.yml --query "SecretString" --output text --region $REGION | jq -r '.password')
