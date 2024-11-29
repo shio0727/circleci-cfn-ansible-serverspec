@@ -72,8 +72,6 @@ jobs:
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
-      
-          
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
 workflows:
