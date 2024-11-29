@@ -65,6 +65,7 @@ jobs:
             DNS_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME2 --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text --region $REGION)
             echo "export DNS_NAME=$DNS_NAME" >> .env
             S3_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME3 --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
+            echo "export S3_NAME=$S3_NAME" >> .env
       - persist_to_workspace:
           root: .
           paths:
