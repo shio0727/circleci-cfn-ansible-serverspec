@@ -53,9 +53,9 @@ jobs:
           name: set environment variables in env_vars.sh
           command: |
             REGION="ap-northeast-1"
-            STACK_NAME=application2.yml
-            STACK_NAME2=application3.yml
-            STACK_NAME3=application4.yml
+            STACK_NAME=lecture13-app2-stack
+            STACK_NAME2=lecture13-app3-stack
+            STACK_NAME3=lecture13-app4-stack
             SECRET_NAME="RDSSecret"
             
             RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
