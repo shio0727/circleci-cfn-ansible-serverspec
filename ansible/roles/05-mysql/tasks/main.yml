@@ -38,12 +38,23 @@
       - mysql-community-server
       - mysql-community-client
     state: present
-
+    
+- name: Read CloudFormation outputs from file
+    set_fact:
+      cfn_outputs: "{{ lookup('file', 'cfn_outputs.json') | from_json }}"
+      
+- name: Parse DBEndpoint from CloudFormation outputs
+    set_fact:
+      db_endpoint: "{{ cfn_outputs | selectattr('OutputKey', 'equalto', 'DBEndpoint') | map(attribute='OutputValue') | first }}"
+    
 - name: add detabase.yml.j2
   become: true
   template:
     src: templates/detabase.yml.j2
     dest: "{{ app_dir }}/config/database.yml"
+  vars:
+    db_password: "{{ lookup('env', 'DB_PASSWORD') }}"
+    db_endpoint: "{{ db_endpoint }}"
 
 - name: Start MySQL service
   systemd:
