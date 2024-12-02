@@ -42,10 +42,10 @@
 - name: Read CloudFormation outputs from file
     set_fact:
       cfn_outputs: "{{ lookup('file', 'cfn_outputs.json') | from_json }}"
-      
+
 - name: Parse DBEndpoint from CloudFormation outputs
     set_fact:
-      db_endpoint: "{{ cfn_outputs | selectattr('OutputKey', 'equalto', 'DBEndpoint') | map(attribute='OutputValue') | first }}"
+    db_endpoint: "{{ cfn_outputs | selectattr('OutputKey', 'equalto', 'DBEndpoint') | map(attribute='OutputValue') | first }}"
     
 - name: add detabase.yml.j2
   become: true
