@@ -69,6 +69,10 @@ jobs:
       - run:
           name: Install Ansible Galaxy Collections
           command: ansible-galaxy collection install community.mysql
+      - aws-cli/setup:
+          aws_access_key_id: AWS_ACCESS_KEY_ID
+          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
       - run:
           name: Retrieve CloudFormation outputs and save to file
           command: |
