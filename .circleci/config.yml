@@ -40,36 +40,6 @@ jobs:
       - aws-cloudformation/deploy:
           stack-name: "lecture13-app4-stack"
           template-file-path: "cloudformation/application4.yml"
-          
-  get-variables-from-cfn:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup:
-          aws_access_key_id: AWS_ACCESS_KEY_ID
-          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-      - run:  # 環境変数の設定
-          name: set environment variables in env_vars.sh
-          command: |
-            REGION="ap-northeast-1"
-            STACK_NAME=lecture13-app2-stack
-            STACK_NAME2=lecture13-app3-stack
-            STACK_NAME3=lecture13-app4-stack
-            SECRET_NAME="RDSSecret"
-            
-            RDS_ENDPOINT=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].Outputs[?OutputKey=='RDSInstanceEndpoint'].OutputValue" --output text --region $REGION)
-            echo "export RDS_ENDPOINT=$(printf '%q' $RDS_ENDPOINT)" >> .env
-            RDS_PASSWORD=$(aws secretsmanager get-secret-value --secret-id $SECRET_NAME --query "SecretString" --output text --region $REGION | jq -r '.password')
-            echo "export RDS_PASSWORD=$(printf '%q' $RDS_PASSWORD)" >> .env
-            DNS_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME2 --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerDNSName'].OutputValue" --output text --region $REGION)
-            echo "export DNS_NAME=$DNS_NAME" >> .env
-            S3_NAME=$(aws cloudformation describe-stacks --stack-name $STACK_NAME3 --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text --region $REGION)
-            echo "export S3_NAME=$S3_NAME" >> .env
-      - persist_to_workspace:
-          root: .
-          paths:
-            - .env
             
   execute-ansible:
     executor: ansible-playbook/default
@@ -100,23 +70,16 @@ jobs:
           name: Install Ansible Galaxy Collections
           command: ansible-galaxy collection install community.mysql
       - run:
-          name: Use Environment Variable
+          name: Retrieve CloudFormation outputs and save to file
           command: |
-            source .env
-            echo $RDS_ENDPOINT
-            echo $RDS_PASSWORD
-            echo $DNS_NAME
-            echo $S3_NAME
+            aws cloudformation describe-stacks --stack-name lecture13-app2-stack --query "Stacks[0].Outputs" --region ap-northeast-1 > cfn_outputs.json
+            db_endpoint=$(jq -r '.[] | select(.OutputKey=="RDSInstanceEndpoint") | .OutputValue' cfn_outputs.json)
+            echo "DB_ENDPOINT=$db_endpoint" >> $BASH_ENV
       - run:
-          name: Replacing environment variables in Sed
+          name: Retrieve RDS password from AWS Secrets Manager
           command: |
-            source .env
-            sed -i "s/RDS_ENDPOINT/${RDS_ENDPOINT}/g" ansible/playbook.yml
-            sed -i "s/RDS_PASSWORD/${RDS_PASSWORD}/g" ansible/playbook.yml
-            sed -i "s/DNS_NAME/${DNS_NAME}/g" ansible/playbook.yml
-            sed -i "s/S3_NAME/${S3_NAME}/g" ansible/playbook.yml
-            cat ansible/playbook.yml
-          no_output_timeout: 30m
+            db_password=$(aws secretsmanager get-secret-value --secret-id RDSSecret --query "SecretString" --output text | jq -r .DBPassword)
+            echo "DB_PASSWORD=$db_password" >> $BASH_ENV
       - ansible-playbook/playbook:
           playbook: ansible/playbook.yml
           playbook-options: -u ec2-user -i ansible/inventory --private-key ~/.ssh/authorized_key
@@ -128,12 +91,9 @@ workflows:
   lecture13-workflow:
     jobs:
       - execute-cloudformation
-      - get-variables-from-cfn:
-          requires:
-            - execute-cloudformation
       - execute-ansible:
           requires:
-            - get-variables-from-cfn
+            - execute-cloudformation
   
 # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
